@@ -1,0 +1,55 @@
+brand_id,brand_name,founded_year,country
+B002,梅赛德斯-奔驰（Mercedes-Benz）,1886,德国
+B001,标致（Peugeot）,1889,法国
+B003,雷诺（Renault）,1898,法国
+B005,别克（Buick）,1899,美国
+B020,欧宝（Opel）,1899,德国
+B004,菲亚特（Fiat）,1899,意大利
+B006,凯迪拉克（Cadillac）,1902,美国
+B007,福特（Ford）,1903,美国
+B022,劳斯莱斯（Rolls-Royce）,1904,英国
+B016,奥迪（Audi）,1909,德国
+B027,阿尔法·罗密欧（Alfa Romeo）,1910,意大利
+B008,GMC（GMC）,1911,美国
+B009,雪佛兰（Chevrolet）,1911,美国
+B025,阿斯顿·马丁（Aston Martin）,1913,英国
+B026,玛莎拉蒂（Maserati）,1914,意大利
+B014,道奇（Dodge）,1914,美国
+B017,宝马（BMW）,1916,德国
+B011,林肯（Lincoln）,1917,美国
+B021,宾利（Bentley）,1919,英国
+B041,西特罗恩（Citro?n）,1919,法国
+B023,捷豹（Jaguar）,1922,英国
+B010,克莱斯勒（Chrysler）,1925,美国
+B015,庞蒂亚克（Pontiac）,1926,美国
+B040,沃尔沃（Volvo）,1927,瑞典
+B018,保时捷（Porsche）,1931,德国
+B031,日产（Nissan）,1933,日本
+B030,丰田（Toyota）,1937,日本
+B019,大众（Volkswagen）,1937,德国
+B013,吉普（Jeep）,1941,美国
+B039,起亚（Kia）,1944,韩国
+B028,法拉利（Ferrari）,1947,意大利
+B032,本田（Honda）,1948,日本
+B024,路虎（Land Rover）,1948,英国
+B033,斯巴鲁（Subaru）,1953,日本
+B046,红旗（Hongqi）,1958,中国
+B029,兰博基尼（Lamborghini）,1963,意大利
+B038,现代（Hyundai）,1967,韩国
+B034,三菱（Mitsubishi Motors）,1970,日本
+B042,标致雪铁龙集团（PSA）,1976,法国
+B047,长城（Great Wall）,1984,中国
+B037,讴歌（Acura）,1986,日本
+B036,英菲尼迪（Infiniti）,1989,日本
+B035,雷克萨斯（Lexus）,1989,日本
+B044,比亚迪（BYD）,1995,中国
+B043,吉利（Geely）,1997,中国
+B045,奇瑞（Chery）,1997,中国
+B012,特斯拉（Tesla）,2003,美国
+B050,哪吒（Nezha）,2014,中国
+B049,小鹏（XPeng）,2014,中国
+B048,蔚来（NIO）,2014,中国
+B051,理想（Li Auto）,2015,中国
+B052,零跑（Leapmotor）,2015,中国
+B053,小米（Xiaomi Auto）,2021,中国
+B054,极氪（Zeekr）,2021,中国

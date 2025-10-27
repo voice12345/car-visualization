@@ -1,0 +1,178 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>全球车企品牌诞生时间轴（纯HTML版）</title>
+<style>
+  :root {
+    --bg:#F7F9FC;
+    --grid:#E6ECF2;
+    --axis:#0D1B2A;
+    --text:#1B263B;
+    --accent:#00BFFF;
+  }
+  body{
+    font-family: system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue","Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);
+    margin:0; padding:24px;
+    color:var(--text);
+  }
+  h1{margin:0 0 8px 0; font-size:22px; color:var(--axis);}
+  .sub{margin:0 0 16px 0; color:#556; font-size:14px;}
+  .panel{display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin:8px 0 16px}
+  button{
+    border:1px solid var(--accent); background:white; color:var(--accent);
+    padding:6px 10px; border-radius:10px; cursor:pointer; font-size:13px;
+  }
+  button.primary{background:var(--accent); color:white;}
+  #yearOut{font-weight:700; color:var(--axis);}
+  #chart{width:100%; height:520px; background:white; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,.04); padding:8px 8px 16px 80px; position:relative;}
+  svg{width:100%; height:100%; display:block;}
+  .ylabel{position:absolute; left:12px; font-size:12px; color:#445;}
+  .ylabel div{height:20px; display:flex; align-items:center;}
+  .tooltip{
+    position:fixed; pointer-events:none; background:#111; color:#fff; font-size:12px; padding:6px 8px; border-radius:8px; opacity:0; transition:opacity .12s;
+  }
+  .legend{display:flex; gap:10px; flex-wrap:wrap; margin-top:6px; font-size:12px;}
+  .legend span{display:inline-flex; align-items:center; gap:6px;}
+  .dot{transition: r .2s, opacity .2s;}
+</style>
+</head>
+<body>
+  <h1>全球车企品牌诞生时间轴</h1>
+  <div class="sub">拖动时间或点击播放逐年呈现品牌诞生；悬停查看品牌与国家。</div>
+  <div class="panel">
+    <button id="play" class="primary">播放</button>
+    <button id="pause">暂停</button>
+    <button id="reset">重置</button>
+    <div>年份：<span id="yearOut"></span></div>
+    <input id="slider" type="range" min="1886" max="2021" value="1886" step="1" style="width:260px"/>
+  </div>
+  <div id="chart">
+    <div class="ylabel" id="ylabels"></div>
+    <svg id="svg" viewBox="0 0 1000 520" preserveAspectRatio="none"></svg>
+  </div>
+  <div class="legend" id="legend"></div>
+  <div class="tooltip" id="tip"></div>
+<script>
+const DATA = [{"brand_name": "梅赛德斯-奔驰（Mercedes-Benz）", "founded_year": 1886, "country": "德国"}, {"brand_name": "标致（Peugeot）", "founded_year": 1889, "country": "法国"}, {"brand_name": "雷诺（Renault）", "founded_year": 1898, "country": "法国"}, {"brand_name": "别克（Buick）", "founded_year": 1899, "country": "美国"}, {"brand_name": "欧宝（Opel）", "founded_year": 1899, "country": "德国"}, {"brand_name": "菲亚特（Fiat）", "founded_year": 1899, "country": "意大利"}, {"brand_name": "凯迪拉克（Cadillac）", "founded_year": 1902, "country": "美国"}, {"brand_name": "福特（Ford）", "founded_year": 1903, "country": "美国"}, {"brand_name": "劳斯莱斯（Rolls-Royce）", "founded_year": 1904, "country": "英国"}, {"brand_name": "奥迪（Audi）", "founded_year": 1909, "country": "德国"}, {"brand_name": "阿尔法·罗密欧（Alfa Romeo）", "founded_year": 1910, "country": "意大利"}, {"brand_name": "GMC（GMC）", "founded_year": 1911, "country": "美国"}, {"brand_name": "雪佛兰（Chevrolet）", "founded_year": 1911, "country": "美国"}, {"brand_name": "阿斯顿·马丁（Aston Martin）", "founded_year": 1913, "country": "英国"}, {"brand_name": "玛莎拉蒂（Maserati）", "founded_year": 1914, "country": "意大利"}, {"brand_name": "道奇（Dodge）", "founded_year": 1914, "country": "美国"}, {"brand_name": "宝马（BMW）", "founded_year": 1916, "country": "德国"}, {"brand_name": "林肯（Lincoln）", "founded_year": 1917, "country": "美国"}, {"brand_name": "宾利（Bentley）", "founded_year": 1919, "country": "英国"}, {"brand_name": "西特罗恩（Citro?n）", "founded_year": 1919, "country": "法国"}, {"brand_name": "捷豹（Jaguar）", "founded_year": 1922, "country": "英国"}, {"brand_name": "克莱斯勒（Chrysler）", "founded_year": 1925, "country": "美国"}, {"brand_name": "庞蒂亚克（Pontiac）", "founded_year": 1926, "country": "美国"}, {"brand_name": "沃尔沃（Volvo）", "founded_year": 1927, "country": "瑞典"}, {"brand_name": "保时捷（Porsche）", "founded_year": 1931, "country": "德国"}, {"brand_name": "日产（Nissan）", "founded_year": 1933, "country": "日本"}, {"brand_name": "大众（Volkswagen）", "founded_year": 1937, "country": "德国"}, {"brand_name": "丰田（Toyota）", "founded_year": 1937, "country": "日本"}, {"brand_name": "吉普（Jeep）", "founded_year": 1941, "country": "美国"}, {"brand_name": "起亚（Kia）", "founded_year": 1944, "country": "韩国"}, {"brand_name": "法拉利（Ferrari）", "founded_year": 1947, "country": "意大利"}, {"brand_name": "本田（Honda）", "founded_year": 1948, "country": "日本"}, {"brand_name": "路虎（Land Rover）", "founded_year": 1948, "country": "英国"}, {"brand_name": "斯巴鲁（Subaru）", "founded_year": 1953, "country": "日本"}, {"brand_name": "红旗（Hongqi）", "founded_year": 1958, "country": "中国"}, {"brand_name": "兰博基尼（Lamborghini）", "founded_year": 1963, "country": "意大利"}, {"brand_name": "现代（Hyundai）", "founded_year": 1967, "country": "韩国"}, {"brand_name": "三菱（Mitsubishi Motors）", "founded_year": 1970, "country": "日本"}, {"brand_name": "标致雪铁龙集团（PSA）", "founded_year": 1976, "country": "法国"}, {"brand_name": "长城（Great Wall）", "founded_year": 1984, "country": "中国"}, {"brand_name": "讴歌（Acura）", "founded_year": 1986, "country": "日本"}, {"brand_name": "英菲尼迪（Infiniti）", "founded_year": 1989, "country": "日本"}, {"brand_name": "雷克萨斯（Lexus）", "founded_year": 1989, "country": "日本"}, {"brand_name": "比亚迪（BYD）", "founded_year": 1995, "country": "中国"}, {"brand_name": "吉利（Geely）", "founded_year": 1997, "country": "中国"}, {"brand_name": "奇瑞（Chery）", "founded_year": 1997, "country": "中国"}, {"brand_name": "特斯拉（Tesla）", "founded_year": 2003, "country": "美国"}, {"brand_name": "哪吒（Nezha）", "founded_year": 2014, "country": "中国"}, {"brand_name": "小鹏（XPeng）", "founded_year": 2014, "country": "中国"}, {"brand_name": "蔚来（NIO）", "founded_year": 2014, "country": "中国"}, {"brand_name": "理想（Li Auto）", "founded_year": 2015, "country": "中国"}, {"brand_name": "零跑（Leapmotor）", "founded_year": 2015, "country": "中国"}, {"brand_name": "小米（Xiaomi Auto）", "founded_year": 2021, "country": "中国"}, {"brand_name": "极氪（Zeekr）", "founded_year": 2021, "country": "中国"}];
+const COUNTRIES = ["德国", "法国", "意大利", "美国", "英国", "瑞典", "日本", "韩国", "中国"];
+const PALETTE = ["#0D1B2A", "#1B263B", "#415A77", "#778DA9", "#E0E1DD", "#00BFFF", "#FFD166", "#EF476F", "#06D6A0", "#8E24AA"];
+
+const svg = document.getElementById('svg');
+const tip = document.getElementById('tip');
+const ylabels = document.getElementById('ylabels');
+const legend = document.getElementById('legend');
+const slider = document.getElementById('slider');
+const yearOut = document.getElementById('yearOut');
+const btnPlay = document.getElementById('play');
+const btnPause = document.getElementById('pause');
+const btnReset = document.getElementById('reset');
+
+const W = 1000, H = 520, leftPad = 0, rightPad = 10, topPad = 20, bottomPad = 40;
+
+const minYear = parseInt(slider.min), maxYear = parseInt(slider.max);
+
+function xScale(year){
+  return ((year - minYear) / (maxYear - minYear)) * (W - 100) + 50;
+}
+function yScale(country){
+  const idx = COUNTRIES.indexOf(country);
+  return topPad + 20 + idx * 20;
+}
+
+function initAxes(){
+  // grid lines + x-axis ticks
+  const ns = "http://www.w3.org/2000/svg";
+  const g = document.createElementNS(ns,'g');
+  // vertical ticks every 5 years
+  for(let y=minYear; y<=maxYear; y+=5){
+    const x = xScale(y);
+    const line = document.createElementNS(ns,'line');
+    line.setAttribute('x1', x); line.setAttribute('y1', topPad);
+    line.setAttribute('x2', x); line.setAttribute('y2', H-bottomPad);
+    line.setAttribute('stroke', '#E6ECF2'); line.setAttribute('stroke-width','1');
+    g.appendChild(line);
+    const label = document.createElementNS(ns,'text');
+    label.setAttribute('x', x); label.setAttribute('y', H-12);
+    label.setAttribute('text-anchor','middle');
+    label.setAttribute('font-size','10');
+    label.setAttribute('fill','#334');
+    label.textContent = y;
+    g.appendChild(label);
+  }
+  svg.appendChild(g);
+
+  // y labels (HTML overlay)
+  ylabels.innerHTML = COUNTRIES.map(c => `<div style="height:20px; transform:translateY(${yScale(c)-28}px)">${c}</div>`).join('');
+}
+
+function colorByCountry(c){
+  const idx = COUNTRIES.indexOf(c);
+  return PALETTE[idx % PALETTE.length];
+}
+
+let dots = [];
+function drawDots(year){
+  // remove existing
+  dots.forEach(d => d.remove());
+  dots = [];
+  const ns = "http://www.w3.org/2000/svg";
+  const shown = DATA.filter(d => d.founded_year <= year);
+  shown.forEach(d => {
+    const cx = xScale(d.founded_year);
+    const cy = yScale(d.country);
+    const circle = document.createElementNS(ns,'circle');
+    circle.setAttribute('cx', cx);
+    circle.setAttribute('cy', cy);
+    circle.setAttribute('r', 4);
+    circle.setAttribute('fill', colorByCountry(d.country));
+    circle.setAttribute('opacity','0.9');
+    circle.classList.add('dot');
+    circle.addEventListener('mouseenter', (e)=>{
+      tip.style.opacity = 1;
+      tip.innerHTML = `${d.brand_name}<br/>${d.country} · ${d.founded_year}`;
+    });
+    circle.addEventListener('mousemove', (e)=>{
+      tip.style.left = (e.clientX+12)+'px';
+      tip.style.top = (e.clientY+12)+'px';
+    });
+    circle.addEventListener('mouseleave', ()=>{ tip.style.opacity = 0; });
+    svg.appendChild(circle);
+    dots.push(circle);
+  });
+}
+
+function buildLegend(){
+  legend.innerHTML = COUNTRIES.map((c,i)=>`<span><svg width="10" height="10" style="margin-right:2px"><circle cx="5" cy="5" r="5" fill="${colorByCountry(c)}" /></svg>${c}</span>`).join('');
+}
+
+let playing = false; let t=null;
+function tick(){
+  const y = parseInt(slider.value);
+  if(y<maxYear){
+    slider.value = y+1;
+    update(parseInt(slider.value));
+    t = requestAnimationFrame(tick);
+  } else { playing=false; cancelAnimationFrame(t); }
+}
+
+function update(y){
+  yearOut.textContent = y;
+  drawDots(y);
+}
+
+initAxes();
+buildLegend();
+update(minYear);
+
+btnPlay.onclick = ()=>{ if(!playing){ playing=true; t=requestAnimationFrame(tick); } };
+btnPause.onclick = ()=>{ playing=false; cancelAnimationFrame(t); };
+btnReset.onclick = ()=>{ playing=false; cancelAnimationFrame(t); slider.value=minYear; update(minYear); };
+slider.oninput = (e)=> update(parseInt(e.target.value));
+
+</script>
+</body>
+</html>

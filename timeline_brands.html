@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>汽车品牌成立时间轴（可交互）</title>
+  <style>
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:#0f1115;color:#e7e8ea}
+    header{padding:14px 16px;border-bottom:1px solid #222;position:sticky;top:0;background:rgba(15,17,21,.85);backdrop-filter:blur(6px)}
+    h1{margin:.2rem 0;font-size:1.1rem}
+    .wrap{padding:16px}
+    #chart{width:100%;height:560px;background:#171a21;border:1px solid #222;border-radius:12px}
+    .hint{color:#9aa0a6;margin:10px 0}
+  </style>
+  <!-- ECharts CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>汽车品牌成立时间轴（1886–2021）</h1>
+  </header>
+  <div class="wrap">
+    <p class="hint">提示：拖动底部滑块或滚轮缩放年份；点击图例可筛选国家；悬浮查看品牌名称与成立年份。</p>
+    <div id="chart"></div>
+  </div>
+  <script>
+    const yearsMin = 1886;
+    const yearsMax = 2021;
+    const countries = ["德国", "法国", "意大利", "美国", "英国", "瑞典", "日本", "韩国", "中国"];
+    const seriesData = [{"type": "scatter", "name": "德国", "symbolSize": 14, "emphasis": {"focus": "series"}, "data": [[1886, 0, "梅赛德斯-奔驰（Mercedes-Benz）", "德国"], [1899, 0, "欧宝（Opel）", "德国"], [1909, 0, "奥迪（Audi）", "德国"], [1916, 0, "宝马（BMW）", "德国"], [1931, 0, "保时捷（Porsche）", "德国"], [1937, 0, "大众（Volkswagen）", "德国"]]}, {"type": "scatter", "name": "法国", "symbolSize": 14, "emphasis": {"focus": "series"}, "data": [[1889, 1, "标致（Peugeot）", "法国"], [1898, 1, "雷诺（Renault）", "法国"], [1919, 1, "西特罗恩（Citroën）", "法国"], [1976, 1, "标致雪铁龙集团（PSA）", "法国"]]}, {"type": "scatter", "name": "意大利", "symbolSize": 14, "emphasis": {"focus": "series"}, "data": [[1899, 2, "菲亚特（Fiat）", "意大利"], [1910, 2, "阿尔法·罗密欧（Alfa Romeo）", "意大利"], [1914, 2, "玛莎拉蒂（Maserati）", "意大利"], [1947, 2, "法拉利（Ferrari）", "意大利"], [1963, 2, "兰博基尼（Lamborghini）", "意大利"]]}, {"type": "scatter", "name": "美国", "symbolSize": 14, "emphasis": {"focus": "series"}, "data": [[1899, 3, "别克（Buick）", "美国"], [1902, 3, "凯迪拉克（Cadillac）", "美国"], [1903, 3, "福特（Ford）", "美国"], [1911, 3, "GMC（GMC）", "美国"], [1911, 3, "雪佛兰（Chevrolet）", "美国"], [1914, 3, "道奇（Dodge）", "美国"], [1917, 3, "林肯（Lincoln）", "美国"], [1925, 3, "克莱斯勒（Chrysler）", "美国"], [1926, 3, "庞蒂亚克（Pontiac）", "美国"], [1941, 3, "吉普（Jeep）", "美国"], [2003, 3, "特斯拉（Tesla）", "美国"]]}, {"type": "scatter", "name": "英国", "symbolSize": 14, "emphasis": {"focus": "series"}, "data": [[1904, 4, "劳斯莱斯（Rolls-Royce）", "英国"], [1913, 4, "阿斯顿·马丁（Aston Martin）", "英国"], [1919, 4, "宾利（Bentley）", "英国"], [1922, 4, "捷豹（Jaguar）", "英国"], [1948, 4, "路虎（Land Rover）", "英国"]]}, {"type": "scatter", "name": "瑞典", "symbolSize": 14, "emphasis": {"focus": "series"}, "data": [[1927, 5, "沃尔沃（Volvo）", "瑞典"]]}, {"type": "scatter", "name": "日本", "symbolSize": 14, "emphasis": {"focus": "series"}, "data": [[1933, 6, "日产（Nissan）", "日本"], [1937, 6, "丰田（Toyota）", "日本"], [1948, 6, "本田（Honda）", "日本"], [1953, 6, "斯巴鲁（Subaru）", "日本"], [1970, 6, "三菱（Mitsubishi Motors）", "日本"], [1986, 6, "讴歌（Acura）", "日本"], [1989, 6, "英菲尼迪（Infiniti）", "日本"], [1989, 6, "雷克萨斯（Lexus）", "日本"]]}, {"type": "scatter", "name": "韩国", "symbolSize": 14, "emphasis": {"focus": "series"}, "data": [[1944, 7, "起亚（Kia）", "韩国"], [1967, 7, "现代（Hyundai）", "韩国"]]}, {"type": "scatter", "name": "中国", "symbolSize": 14, "emphasis": {"focus": "series"}, "data": [[1958, 8, "红旗（Hongqi）", "中国"], [1984, 8, "长城（Great Wall）", "中国"], [1995, 8, "比亚迪（BYD）", "中国"], [1997, 8, "吉利（Geely）", "中国"], [1997, 8, "奇瑞（Chery）", "中国"], [2014, 8, "蔚来（NIO）", "中国"], [2015, 8, "理想（Li Auto）", "中国"], [2021, 8, "小米汽车（Xiaomi Auto）", "中国"]]}];
+
+    const chart = echarts.init(document.getElementById('chart'), null, {renderer:'canvas'});
+    const option = {
+      backgroundColor: 'transparent',
+      tooltip: {
+        trigger: 'item',
+        formatter: (p) => {
+          const [year, , brand, country] = p.value;
+          return `${year}年 · ${country}<br/><b>${brand}</b>`;
+        }
+      },
+      legend: {
+        type: 'scroll',
+        top: 6,
+        textStyle:{color:'#e7e8ea'}
+      },
+      grid: {top: 60, left: 70, right: 20, bottom: 70},
+      xAxis: {
+        type: 'value',
+        min: yearsMin - 2,
+        max: yearsMax + 2,
+        axisLine: {lineStyle:{color:'#888'}},
+        axisLabel: {color:'#cfd1d4'}
+      },
+      yAxis: {
+        type: 'category',
+        data: countries,
+        axisLine: {lineStyle:{color:'#888'}},
+        axisLabel: {color:'#cfd1d4'}
+      },
+      dataZoom: [
+        {type: 'inside', xAxisIndex: 0},
+        {type: 'slider', xAxisIndex: 0, height: 24}
+      ],
+      series: seriesData
+    };
+
+    chart.setOption(option);
+    window.addEventListener('resize', () => chart.resize());
+  </script>
+</body>
+</html>
